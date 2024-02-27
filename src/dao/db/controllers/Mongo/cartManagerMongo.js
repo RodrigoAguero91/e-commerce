@@ -28,7 +28,7 @@ class CartManager {
 
         }
         catch (err) {
-            // console.log(err.message);
+           
             return err.message;
 
         }

@@ -3,17 +3,10 @@ import { __dirname } from "../utils.js"
 import ProductManager from "../Dao/db/controllers/Mongo/productManagerMongo.js"
 const pm=new ProductManager()
 
-//esto era con fs pero ahora trabajo con mongo 
-// import ProductManager from "../Dao/controllers/fs/productManager.js"
-// const manager=new ProductManager(__dirname+'/Dao/database/products.json')
 
 
 const routerP =Router()
 
-// routerP.get("/products",async(req,res)=>{
-//     const products= await pm.getProducts(req.query)
-//     res.json({products})
-// })
 
 
 routerP.get('/products', async (req, res) => {
@@ -23,7 +16,7 @@ routerP.get('/products', async (req, res) => {
 
       const options = {
           page: Number(page) || 1,
-          limit: Number(limit) || 10,
+          limit: Number(limit) || 4,
           sort: { price: Number(sort) }
       };
 
@@ -53,7 +46,7 @@ routerP.get('/products', async (req, res) => {
   
   
 
-      // Devuelve un array con las categorias disponibles y compara con la query "category"
+     
       const categories = await pm.categories()
 
       const result = categories.some(categ => categ === category)

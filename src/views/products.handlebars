@@ -1,13 +1,13 @@
 <div class="container m-auto">
     <nav class="d-flex justify-content-between">
         <div class="title">
-            <h1>Products</h1>
+            <h1>Productos</h1>
 
         </div>
 
         <div class="cart d-flex p-0 mt-2 gap-4 ">
            <div class="cart-container">
-    <img src="./img/cart.svg" alt="cart" class="cart-icon">
+    
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCart">
        ver carrito
     </button>
@@ -38,28 +38,28 @@
 
 <div class="container mt-5">
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+    <div  class="row row-cols-1 row-cols-md-2 row-cols-lg-3p-3 mb-2 ">
         {{#each products}}
-        <div class="col mb-4">
+        <div class="col mb-4  ">
             <div class="card h-100 bg-light">
                 <div class="card-header bg-primary text-white">
-                    <i class="bi bi-tag"></i> Code: {{this.code}}
+                    Code: {{this.code}}
                 </div>
                 <div class="card-body">
                     <h5 class="card-title text-white">{{this.title}}</h5>
                     <ul class="list-unstyled">
                        
-                        <li><i class="bi bi-file-text"></i> Description: {{this.description}}</li>
-                        <li><i class="bi bi-currency-dollar"></i> Price: ${{this.price}}</li>
-                        <li><i class="bi bi-grid"></i> Category: {{this.category}}</li>
-                        <li><i class="bi bi-check-circle"></i> Status: {{this.status}}</li>
+                        <li> Description: {{this.description}}</li>
+                        <li> Price: ${{this.price}}</li>
+                        <li> Category: {{this.category}}</li>
+                        <li> Status: {{this.status}}</li>
                         <li>
-                            <i class="bi bi-image"></i> Image: <img src="{{this.thumbnail}}" alt="{{this.title}}"
+                             Image: <img src="{{this.thumbnail}}" alt="{{this.title}}"
                                 class="img-fluid mt-2">
                         </li>
                     </ul>
                     <div class="text-center mt-3">
-                <a class="btn btn-success text-lg product" id="{{this._id}}" data-value="{{this.stock}}">Agregar al carrito</a>
+                <button type="button" class="btn btn-success text-lg product" id="{{this._id}}" data-value="{{this.stock}}">Agregar al carrito</button>
             </div>
                 </div>
             </div>

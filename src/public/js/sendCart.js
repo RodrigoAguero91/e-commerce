@@ -20,7 +20,7 @@ const productsInCart = () => {
             }
 
             else {
-                modalBody.innerHTML = `<h3> Empty cart </h3>`
+                modalBody.innerHTML = `<h3> Carro Vacio!! </h3>`
             }
         });
 
@@ -31,18 +31,18 @@ arrayProducts.forEach(product => {
         
         const stock = Number(product.getAttribute('data-value'))
         Swal.fire({
-            title: 'Add quantity',
+            title: 'Agregar cantidad',
             input: 'number',
             inputAttributes: {
                 autocapitalize: 'off'
             },
             showCancelButton: true,
-            confirmButtonText: 'Confirm',
+            confirmButtonText: 'Confirmar',
         }).then(response => {
             
             if (stock > Number(response.value) && Number(response.value) > 0) {
                 Swal.fire({
-                    title: 'Product added successfully',
+                    title: 'Producto agregado',
                     text: `ID: ${product.id} - Quantity: ${response.value}`,
                     icon: 'success',
 
@@ -58,16 +58,9 @@ arrayProducts.forEach(product => {
                 productsInCart()
 
             }
-            else if (Number(response.value) < 0){
-                Swal.fire({
-                    title: 'Quantity must be greater than 0',
-                    icon: 'warning'
-                })
-            }
-
             else{
                 Swal.fire({
-                    title: 'Quantity cannot be greater than stock',
+                    title: 'producto no agregado',
                     icon: 'error',
 
                 })
@@ -80,7 +73,7 @@ arrayProducts.forEach(product => {
 
 btnCartFinal.addEventListener('click', () => {
     Swal.fire({
-        title: 'Do you want to finish the purchase?',
+        title: 'finalizar compra?',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#73be73',
@@ -100,26 +93,20 @@ btnCartFinal.addEventListener('click', () => {
                             body: JSON.stringify({ finishBuy: true }),
                         }).then(
                             Swal.fire({
-                                title: 'Completed purchase!',
+                                title: 'Compra completada!',
                                 icon:'success'
                             }
                             )
                         ).then(
-                            modalBody.innerHTML = `<h3> Empty cart </h3>`
+                            modalBody.innerHTML = `<h3> carrito vacio </h3>`
                         )
                     }
-                    else {
-                        Swal.fire({
-                            title: 'Cart is empty',
-                            text: 'The purchase was not made because the cart is empty',
-                            icon: 'info'
-                        })
-                    }
+                   
                 })
         }
         else {
             Swal.fire({
-                title: 'The purchase has not been made yet',
+                title: 'La compra aún no se ha realizado',
                 icon: 'info'
             }
 

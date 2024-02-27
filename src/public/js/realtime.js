@@ -50,7 +50,7 @@ function updateProductList(productList) {
     let category = form.elements.category.value;
     let price = form.elements.price.value;
     let code = form.elements.code.value;
-    let status = form.elements.status.checked; // Obtén el valor del checkbox
+    let status = form.elements.status.checked; 
   
     socketClient.emit("addProduct", {
       title,
@@ -60,7 +60,7 @@ function updateProductList(productList) {
       category,
       price,
       code,
-      status, // Agrega el campo status al objeto enviado al servidor
+      status,
   
     });
   
