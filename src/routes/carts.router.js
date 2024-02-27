@@ -1,6 +1,6 @@
 import { Router} from 'express';
-import CartManager from '../dao/db/controllers/cartManagerMongo.js';
-import ProductManager from '../dao/db/controllers/productManagerMongo.js';
+import CartManager from '../Dao/db/controllers/Mongo/cartManagerMongo.js';
+import ProductManager from '../Dao/db/controllers/Mongo/productManagerMongo.js';
 const routerC = Router()
 const cm = new CartManager()
 const pm = new ProductManager()

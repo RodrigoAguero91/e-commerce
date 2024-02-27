@@ -1,7 +1,11 @@
 import {Router} from "express"
 import { __dirname } from "../utils.js"
-import ProductManager from "../dao/db/controllers/productManagerMongo.js"
+import ProductManager from "../Dao/db/controllers/Mongo/productManagerMongo.js"
 const pm=new ProductManager()
+
+//esto era con fs pero ahora trabajo con mongo 
+// import ProductManager from "../Dao/controllers/fs/productManager.js"
+// const manager=new ProductManager(__dirname+'/Dao/database/products.json')
 
 
 const routerP =Router()

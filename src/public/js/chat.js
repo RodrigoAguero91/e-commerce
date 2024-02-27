@@ -8,7 +8,7 @@ let usuario=null
 
 if(!usuario){
     Swal.fire({
-        title:"Welcome to my Customer Chat Service",
+        title:"Bienvenido al chat",
         text:"Ingresa tu usuario",
         input:"text",
         inputValidator:(value)=>{
@@ -66,9 +66,11 @@ socketClient.on("broadcast",usuario=>{
  })
 
 
+ // Manejo del clic en el botón "Vaciar Chat"
  document.getElementById("clearChat").addEventListener("click", () => {
-   
+    // Borrar el contenido del chat en el cliente
     document.getElementById("chat").textContent = "";
     
+    // Emitir el evento "clearchat" al servidor usando socketClient
     socketClient.emit("clearchat");
 });

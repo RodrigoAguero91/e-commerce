@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import mongoosePaginate from 'mongoose-paginate-v2'
+
 const productCollection="products"
 const productSchema= new mongoose.Schema({
     title: {
@@ -19,11 +21,11 @@ const productSchema= new mongoose.Schema({
     },
     thumbnail: {
         type: String,
-        required: false 
+        required: false // Ahora el campo no es requerido
     },
     code: {
         type: String,
-        unique: true, 
+        unique: true, // Se asegura que el código sea único
         required: true
     },
     category: {
@@ -32,7 +34,10 @@ const productSchema= new mongoose.Schema({
     },
     status: {
         type: Boolean,
-        default: true 
+        default: true // Establecemos el valor por defecto en true
     }
 })
+
+productSchema.plugin(mongoosePaginate)
+
 export const productsModel= mongoose.model(productCollection,productSchema)

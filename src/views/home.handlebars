@@ -1,31 +1,33 @@
+<div class="container m-auto">
+     
+
 <div class="container mt-5">
-    <h1 class="text-center mn-4">LISTA DE PRODUCTOS</h1>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
-            {{#each products}}
-                <div class="col mb-4">
-                    <div class="card h-100 bg-light">
-                        <div class="card-heard bg-success text-white">
-                            <i class="bi bi-tag">ID:{{this.id}}</i>
-                        </div>
-                            <div class="card-body bg-light">
-                                    
-                                    <ul class="list-unstyled">
-                                        <li>Titulo:{{this.title}}</li>
-                                        <li>Description:{{this.description}}</li>
-                                        <li>Precio:${{this.price}}</li>
-                                        <li>Stock:{{this.stock}}</li>
-                                        <li>Status:{{this.status}}</li>
-                                        <li>Categoria:{{this.category}}</li>
-                                        <li>Codigo:{{this.code}}</li>
-                                        <li>
-                                            <img>Img:{{this.imagen}}</img>
-                                        </li>
 
-                                    </ul>
-                            </div>  
-                    </div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+        {{#each listadeproductos}}
+        <div class="col mb-4">
+            <div class="card h-100 bg-light">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-tag"></i> Code: {{this.code}}
                 </div>
-            {{/each}}
+                <div class="card-body">
+                    <h5 class="card-title text-white">{{this.title}}</h5>
+                    <ul class="list-unstyled">
+                       
+                        <li><i class="bi bi-file-text"></i> Description: {{this.description}}</li>
+                        <li><i class="bi bi-currency-dollar"></i> Price: ${{this.price}}</li>
+                        <li><i class="bi bi-grid"></i> Category: {{this.category}}</li>
+                        <li><i class="bi bi-check-circle"></i> Status: {{this.status}}</li>
+                        <li><i class="bi bi-box"></i> Stock: {{this.stock}}</li>
+                        <li>
+                            <i class="bi bi-image"></i> Image: <img src="{{this.thumbnail}}" alt="{{this.title}}"
+                                class="img-fluid mt-2">
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-</div>    
-
+        {{/each}}
+    </div>
+</div>
+</div>

@@ -3,7 +3,7 @@ const URI="mongodb+srv://aguerorodrigo91:takuara47@proyectocoderhouse.pxcbns7.mo
 const connectToDB = () => {
     try {
         mongoose.connect(URI)
-        console.log('Base de datos conectada')
+        console.log('connectado a la base de datos de mongo')
     } catch (error) {
         console.log(error);
     }
