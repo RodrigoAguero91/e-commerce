@@ -5,7 +5,7 @@ const pm = new ProductManager()
 
 const socketProducts = (socketServer) => {
     socketServer.on("connection",async(socket)=>{
-        console.log("cliente conectado con ID:",socket.id)
+        //console.log("cliente conectado con ID:",socket.id)
         const listadeproductos=await pm.getProductsView()
 
         socketServer.emit("enviodeproducts",listadeproductos)

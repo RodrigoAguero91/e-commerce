@@ -10,6 +10,15 @@ import socketProducts from "./Socket/socketProducts.js";
 import connectToDB from "./Dao/db/config/configServer.js";
 import socketChat from "./Socket/socketChat.js";
 import routerC from "./routes/carts.router.js";
+import AuthRouter from "../src/routes/auth.router.js"
+
+import session from "express-session";
+
+import MongoStore from "connect-mongo";
+
+;
+
+
 const app = express()
 const PORT=8080
 // Middleware para analizar el cuerpo JSON de la solicitud
@@ -33,6 +42,32 @@ const httpServer=app.listen(PORT, () => {
         console.log(err);
     }
 });
+
+//Session
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl:'mongodb+srv://aguerorodrigo91:takuara47@proyectocoderhouse.pxcbns7.mongodb.net/Ecommerce',
+        
+    }),
+    secret:'secretCoder',
+    resave: true,
+    saveUninitialized: true
+}))
+app.get('/sessionSet', (req,res) => {
+    req.session.user = 'Rodrigo',
+    req.session.age = 32
+
+    res.send('Session ok!')
+})
+app.get('/sessionGet', (req,res) =>{
+    res.send(req.session)
+})
+
+
+app.use('/view', routerV)
+app.use('/auth', AuthRouter)
+
+
 
 const socketServer = new Server(httpServer)
 

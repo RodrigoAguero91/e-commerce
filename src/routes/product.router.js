@@ -20,7 +20,7 @@ routerP.get('/products', async (req, res) => {
           sort: { price: Number(sort) }
       };
 
-      if (!(options.sort.price === -1 || options.sort.price === 1)) {
+      if (!(options.sort.price === 'desc'? -1 :1)) {
           delete options.sort
       }
 
