@@ -2,14 +2,14 @@ import { Router } from "express";
 import fs from "fs";
 import passport from "passport";
 import {  generaToken, rutaUsuarios } from "../utils.js";
-export const router=Router()
+export const routerSessions=Router()
 
 let usuarios=[]
 if(fs.existsSync(rutaUsuarios)){
    usuarios=JSON.parse(fs.readFileSync(rutaUsuarios, 'utf-8'))
 }
 
-router.post('/registro', (req, res)=>{
+routerSessions.post('/registro', (req, res)=>{
     let {nombre, email, password}= req.body
     if(!nombre || !email || !password) return res.status(400).send('ingrese el usuario')
 
@@ -31,7 +31,7 @@ router.post('/registro', (req, res)=>{
     })
 })
 
-router.post('/login', (req,res)=>{
+routerSessions.post('/login', (req,res)=>{
     let{email,password}= req.body
     if(!email || !password) return res.status(400).send('ingresar email y password')
 
@@ -50,9 +50,9 @@ router.post('/login', (req,res)=>{
 })
 
 
-router.get('/github', passport.authenticate("github", {}), (req,res)=>{})
+routerSessions.get('/github', passport.authenticate("github", {}), (req,res)=>{})
 
-router.get('/callback', passport.authenticate("github", {}), (req,res)=>{
+routerSessions.get('/callback', passport.authenticate("github", {}), (req,res)=>{
    
     req.session.usuario= req.user
 
@@ -60,6 +60,6 @@ router.get('/callback', passport.authenticate("github", {}), (req,res)=>{
    return res.status(200).json({payload:req.user});
 })
 
-export default router
+export default routerSessions
 
 

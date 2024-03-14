@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 
 export const UserSchema =mongoose.model('usuarios' ,new mongoose.Schema({
-   name: {
+   
+    name: {
         type: String,
         required: true
     },
@@ -22,6 +23,10 @@ export const UserSchema =mongoose.model('usuarios' ,new mongoose.Schema({
         type: Number,
         require: true
     },
+
+       
+
+    
     
 }))
 

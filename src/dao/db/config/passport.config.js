@@ -2,7 +2,7 @@ import passport from "passport"
 import github from "passport-github2"
 import { UserSchema } from "../models/user.model.js"
 
-export const initPassport=()=>{
+export  const initPassport=()=>{
     passport.use("github", new github.Strategy(
         {
             clientID:"Iv1.1a2cb61acd254ae2",
@@ -12,11 +12,11 @@ export const initPassport=()=>{
         async(profile, done)=>{
             try{
               let {name, email}=profile._json
-              let usuario= await UserSchema.findOne({email})
+              let usuario= await UserSchema.findOne({email:email})
               if(!usuario){
                 usuario= await UserSchema.create(
                     {
-                        nombre:name, email, github: profile
+                        name:name, email, github: profile
                     }
                 )
               }
@@ -38,3 +38,4 @@ passport.deserializeUser((usuario, done)=>{
     done(null, usuario)
 })
 
+export default initPassport()

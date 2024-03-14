@@ -146,14 +146,6 @@ routerV.get('/carts/:cid', async (req, res) => {
 
 
 
-routerV.get('/login', (req, res)=> {
-    res.render('login')
-})
-routerV.get('/register', (req, res)=> {
-    res.render('register')
-})
-routerV.get('/profile', (req, res)=> {
-    res.render('profile')
-})
+
 
 export default routerV
