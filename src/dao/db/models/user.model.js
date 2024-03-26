@@ -19,11 +19,19 @@ export const UserSchema =mongoose.model('usuarios' ,new mongoose.Schema({
         type:String,
         required: true,
     },
-    tel: {
+    age: {
         type: Number,
         require: true
     },
-
+    cart: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'carts'
+    },
+    role: {
+        type: String,
+        enum: ['admin', 'usuario'],
+        default: 'usuario'
+    }
        
 
     

@@ -82,7 +82,7 @@ app.post('/signup', async (req, res)=>{
         lastname: req.body.lastname,
         email: req.body.email,
         password: req.body.password,
-        tel: req.body.tel
+        age: req.body.age
        
     }
     const existingUser= await UserSchema.findOne({name: data.name})
@@ -103,7 +103,7 @@ app.post('/signup', async (req, res)=>{
 
 app.post('/login', async (req, res)=>{
     try{
-        const check = await UserSchema.findOne({name: req.body.username});
+        const check = await UserSchema.findOne({email: req.body.email});
         if(!check){
             res.send("user name cannot found");
         }
