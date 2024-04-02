@@ -1,133 +1,120 @@
-import express from "express"
-import { __dirname } from "./utils.js"
-import handlebars from "express-handlebars"
-import {Server} from "socket.io"
-import bcrypt from "bcrypt";
+import express from 'express'
+import { Server } from 'socket.io'
+import handlebars from 'express-handlebars'
+import productsRouter from './routers/products.router.js'
+import cartsRouter from './routers/carts.routers.js'
+import viewsRouter from './routers/views.router.js'
+import chatRouter from './routers/chat.router.js'
+import sessionsRouter from './routers/sessions.router.js'
+import viewsUserRouter from './routers/viewsUser.router.js'
+import mongoose from 'mongoose'
+import Message from './dao/models/message.model.js'
+import session from 'express-session'
+import MongoStore from 'connect-mongo'
+import passport from 'passport'
+import initializePassport from './dao/config/passport.config.js'
 
-import routerP from "./routes/product.router.js";
-import routerV from "./routes/views.router.js";
-import routerC from "./routes/carts.router.js";
-import routerSessions from "./routes/sessions.router.js";
+const PORT = 8080; 
 
-import socketProducts from "./Socket/socketProducts.js";
-import socketChat from "./Socket/socketChat.js";
+const app = express(); 
+app.use(express.json()); 
+app.use(express.static('./src/public')); 
 
-import connectToDB from "./Dao/db/config/configServer.js";
-import MongoStore from "connect-mongo";
-import { UserSchema } from "./Dao/db/models/user.model.js";
-
-import session from "express-session";
-
-import passport from "passport";
-import { initPassport } from "./Dao/db/config/passport.config.js";
-
-import { auth } from "./middleware/auth.js";
-
-
-
-
-const app = express()
-const PORT=8080
-// Middleware para analizar el cuerpo JSON de la solicitud
-app.use(express.json());
-app.use(express.urlencoded({extended:true}));
-app.use(express.static(__dirname + "/public"))
-//handlebars
-app.engine("handlebars",handlebars.engine())
-app.set("views", __dirname+"/views")
-app.set("view engine","handlebars")
-//rutas
-app.use("/api",routerP)
-app.use('/', routerV);
-app.use("/api",routerC)
-app.use("/api/sessions", routerSessions)
-connectToDB()
-const httpServer=app.listen(PORT, () => {
-    try {
-        console.log(`Conectado al puerto: ${PORT}`);
-      
-    }
-    catch (err) {
-        console.log(err);
-    }
-});
-
-//Session
+// configuracion de la sesion
 app.use(session({
     store: MongoStore.create({
-        mongoUrl:'mongodb+srv://aguerorodrigo91:takuara47@proyectocoderhouse.pxcbns7.mongodb.net/Ecommerce',
-        
-    }),
-    secret:'coderSecret',
-    resave: true,
-    saveUninitialized: true
+      mongoUrl: 'mongodb+srv://aguerorodrigo91:takuara47@proyectocoderhouse.pxcbns7.mongodb.net/Ecommerce',
+      dbName: 'Ecommerce',
+      mongoOptions: {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      }
+  }),
+  secret: 'secret',
+  resave: true,
+  saveUninitialized: true
 }))
-initPassport()
-app.use(passport.initialize())
-app.use(passport.session())
+
+// configuracion de passport
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
+
+// configuracion del motor de plantillas handlebars
+app.engine('handlebars', handlebars.engine());
+app.set('views', './src/views');
+app.set('view engine', 'handlebars');
 
 
-
-app.get('/login',(req, res)=>{
-    res.render('login');
-})
-
-app.get('/signup', (req, res)=>{
-    res.render('signup');
-})
-
-app.post('/signup', async (req, res)=>{
-    const data = {
-        name: req.body.username,
-        lastname: req.body.lastname,
-        email: req.body.email,
-        password: req.body.password,
-        age: req.body.age
-       
-    }
-    const existingUser= await UserSchema.findOne({name: data.name})
-    if(existingUser){
-        res.send("El usuario ya existe. Registrarse con otro nombre.")
-    }else{
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(data.password, saltRounds);
-        data.password= hashedPassword;
-        const userdata = await UserSchema.insertMany(data);
-        console.log(userdata)
-    }
-   
+// Inicialización del servidor
+try {
+    await mongoose.connect('mongodb+srv://aguerorodrigo91:takuara47@proyectocoderhouse.pxcbns7.mongodb.net/Ecommerce') 
+    const serverHttp = app.listen(PORT, () => console.log(`conectado al puerto :${PORT}`)) 
+    const io = new Server(serverHttp) 
+    app.use((req, res, next) => {
+        req.io = io;
+        next();
+    }); 
     
+    // Rutas
+    app.get('/', (req, res) => {
+      if (req.session.user) {
+         
+          res.render('index');
+      } else {
+          
+          res.redirect('/login');
+      }
+    })
+    
+    app.use('/', viewsUserRouter); 
+    app.use('/chat', chatRouter); 
+    app.use('/products', viewsRouter); 
+    app.use('/api/products', productsRouter); 
+    app.use('/api/carts', cartsRouter); 
+    app.use('/api/sessions', sessionsRouter); 
+    
+    io.on('connection', socket => {
+        console.log('Nuevo cliente conectado!')
 
-}) ;
+        socket.broadcast.emit('Alerta');
 
+        
+        Message.find()
+          .then(messages => {
+            socket.emit('messages', messages); 
+          })
+          .catch(error => {
+            console.log(error.message);
+          });
+    
+        socket.on('message', data => {
+          
+          const newMessage = new Message({
+            user: data.user,
+            message: data.message
+          });
+    
+          newMessage.save()
+            .then(() => {
+              
+              Message.find()
+                .then(messages => {
+                  io.emit('messages', messages);
+                })
+                .catch(error => {
+                  console.log(error.message);
+                });
+            })
+            .catch(error => {
+              console.log(error.message);
+            });
+        });
 
-app.post('/login', async (req, res)=>{
-    try{
-        const check = await UserSchema.findOne({email: req.body.email});
-        if(!check){
-            res.send("user name cannot found");
-        }
-        const isPasswordMatch = await bcrypt.compare(req.body.password, check.password)
-        if(isPasswordMatch){
-            res.render('products');
-        }else{
-            req.send("wrong password");
-        }
-    }catch{
-        res.send("wrong password");
-    }
-})
-
-app.get('/perfil', auth, (req, res)=>{
-    res.setHeader('content-Type','application/json');
-    res.status(200).json({
-        mensaje:'Perfil de usuario',usuario:req.user
-    });
-})
-
-
-
-const socketServer = new Server(httpServer)
-
-socketProducts(socketServer)
-socketChat(socketServer)
+        socket.on('productList', async (data) => { 
+            io.emit('updatedProducts', data ) 
+        }) 
+    }) 
+} catch (error) {
+    console.log(error.message)
+}
