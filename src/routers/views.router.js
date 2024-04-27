@@ -1,7 +1,7 @@
 import { Router } from "express"
 import ProductManager from '../dao/fsManagers/ProductManager.js'
-import ProductModel from '../dao/models/product.model.js';
-import cartModel from "../dao/models/cart.model.js";
+import ProductModel from '../models/product.model.js';
+import cartModel from "../models/cart.model.js";
 import { isAuthenticated, isAdmin, hasAdminCredentials } from "../public/js/authMiddleware.js";
 import { 
   readViewsProductsController, 

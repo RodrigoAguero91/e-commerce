@@ -1,6 +1,6 @@
 import { Router } from "express";
 import fs from 'fs';
-import Product from '../dao/models/product.model.js';
+import Product from '../models/product.model.js';
 import { paginate } from "mongoose-paginate-v2";
 import { createProductController, readProductController, readAllProductsController, updateProductController, deleteProductController } from "../controllers/product.controller.js";
 

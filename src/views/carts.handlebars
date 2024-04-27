@@ -12,3 +12,16 @@
         {{/each}}
     </ul>
 </div>
+
+{{#if products.length}}
+    <button id="purchaseBtn" data-cart-id="{{cid}}" data-mail-user="{{mailUser}}">Finalizar Compra</button> <!-- Agregar atributo de datos -->
+{{/if}}
+
+<div id="purchaseResults" class="ticket" style="display: none;">
+    <h4>Productos Comprados</h4>
+    <ul id="purchasedProducts"></ul>
+    <h4>Productos No Comprados</h4>
+    <ul id="notPurchasedProducts"></ul>
+</div>
+
+<script type="module" src="/js/cartPurchase.js"></script>

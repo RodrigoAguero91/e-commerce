@@ -1,5 +1,6 @@
 import passport from 'passport';
-import Cart from '../dao/models/cart.model.js'
+import Cart from '../models/cart.model.js'
+import UserDTO from '../dto/User.js'
 
 export const createUserController = async (req, res, next) => {
     passport.authenticate('register', async (err, user, info) => {
@@ -70,8 +71,11 @@ export const readInfoUserController = (req, res) => {
         cart: req.user.cart,
         role: req.user.role
       };
-      console.log('User: ', user)
-      res.status(200).json(user);
+
+
+      const result = new UserDTO(user);
+      console.log('User: ', result)
+      res.status(200).json(result);
     } else {
       // Si el usuario no está autenticado, devuelve un error 401 (No autorizado)
       res.status(401).json({ error: 'No autorizado' });

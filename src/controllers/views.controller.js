@@ -1,5 +1,8 @@
-import ProductModel from '../dao/models/product.model.js';
-import cartModel from "../dao/models/cart.model.js";
+import ProductModel from '../models/product.model.js';
+import cartModel from "../models/cart.model.js";
+import { ProductService } from '../services/index.js';
+import config from '../config/config.js'
+
 
 export const readViewsProductsController = async (req, res) => {
     try {
@@ -32,7 +35,8 @@ export const readViewsProductsController = async (req, res) => {
 
 export const readViewsRealTimeProductsController = async (req, res) => {
     try {
-      const products = await ProductModel.find().lean().exec();
+      //const products = await ProductModel.find().lean().exec();
+      const products = await ProductService.getAll()
       res.render('realTimeProducts', { products });
     } catch (error) {
       console.log('Error al leer los productos en tiempo real:', error);
@@ -43,27 +47,33 @@ export const readViewsRealTimeProductsController = async (req, res) => {
 export const readViewsProductController = async (req, res) => {
     try {
       const id = req.params.cid
-      const result = await ProductModel.findById(id).lean().exec();
+      //const result = await ProductModel.findById(id).lean().exec();
+      const result = await ProductService.getById(id)
+      const cartInfo = {
+        cart: req.session.user.cart,
+      };
+
+      const userAdminControl = req.session.user.email != config.adminEmail ? true : false;
+
       if (result === null) {
         return res.status(404).json({ status: 'error', error: 'Product not found' });
       }
-      res.render('productDetail', result);
+      res.render('productDetail', { product: result, cartID: cartInfo.cart, userAdminControl: userAdminControl});
     } catch (error) {
       res.status(500).json({ error: 'Error al leer los productos' });
     }
 }
 
 export const readViewsCartController = async (req, res) => {
-    // ID del carrito: 64a36d28ae5981f3f6e4488e
     try {
       const id = req.params.cid
       const result = await cartModel.findById(id).lean().exec();
       if (result === null) {
         return res.status(404).json({ status: 'error', error: 'Cart not found' });
       }
-      res.render('carts', { cid: result._id, products: result.products });
+      const mailUser = req.session.user.email;
+      res.render('carts', { cid: result._id, products: result.products, mailUser: mailUser});
     } catch (error) {
       res.status(500).json({ status: 'error', error: error.message });
     }
 }
-

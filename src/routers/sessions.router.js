@@ -1,6 +1,6 @@
 import { Router } from "express";
 import passport from 'passport';
-import Cart from '../dao/models/cart.model.js'
+import Cart from './carts.routers.js';
 import { 
   createUserController, 
   failCreateUserController, 
