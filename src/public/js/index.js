@@ -34,7 +34,11 @@ document.getElementById('createBtn').addEventListener('click', () => {
         document.getElementById('stock').value = ''
         document.getElementById('category').value = ''
     }) // si el resultado es un error, lanza una excepción, si no, emite el evento productList con la lista de productos
-    .catch(error => alert(`Ocurrio un error : ${error}`)) // si hubo un error, muestra un alert con el error
+    .catch(error => {
+      alert(`Ocurrio un error : ${error}`)
+      console.log(error)
+    }
+    ) // si hubo un error, muestra un alert con el error
 })
 
 deleteProduct = (id) => {

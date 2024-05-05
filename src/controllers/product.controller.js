@@ -1,12 +1,34 @@
+import { ProductService } from "../services/index.js";
+import CustomError from "../services/errors/custom_error.js";
+import EErros from "../services/errors/enums.js";
+import { generateProductErrorInfo } from "../services/errors/info.js";
+
 export const createProductController = async (req, res) => {
     try {
       const product = req.body
-      const result = await Product.create(product);
-      const products = await Product.find().lean().exec();
+      // console.log(product)
+      if (!product.title || !product.price || !product.description || !product.code  || !product.stock || !product.category){
+        const errorInfo = generateProductErrorInfo(product);
+        CustomError.createError({
+          name: "Product creation Error",
+          cause: errorInfo,
+          message: "Error typing to create a product",
+          code: EErros.INVALID_TYPES_ERROR
+        })
+        console.log(errorInfo)
+      }
+
+      //const result = await Product.create(product);
+      const result = await ProductService.create(product)
+      
+      //const products = await Product.find().lean().exec();
+      const products = await ProductService.getAll()
+
       req.io.emit('productList', products); // emite el evento updatedProducts con la lista de productos
       res.status(201).json({ status: 'success', payload: result });
     } catch (error) {
-      res.status(500).json({ status: 'error', error: error.message });
+      console.log(error.cause)
+      res.status(500).json({ status: 'error', error: error.cause });
     }
 }
 
@@ -15,16 +37,18 @@ export const updateProductController = async (req, res) => {
       const productId = req.params.pid;
       const updatedFields = req.body;
   
-      const updatedProduct = await Product.findByIdAndUpdate(productId, updatedFields, {
-        new: true // Para devolver el documento actualizado
-      }).lean().exec();
+      // const updatedProduct = await Product.findByIdAndUpdate(productId, updatedFields, {
+      //   new: true // Para devolver el documento actualizado
+      // }).lean().exec();
+      const updatedProduct = await ProductService.update(productId, updatedFields)
   
       if (!updatedProduct) {
         res.status(404).json({ error: 'Producto no encontrado' });
         return;
       }
   
-      const products = await Product.find().lean().exec();
+      //const products = await Product.find().lean().exec();
+      const products = await ProductService.getAll();
   
       req.io.emit('productList', products);
   
@@ -39,14 +63,16 @@ export const deleteProductController = async (req, res) => {
     try {
       const productId = req.params.pid;
   
-      const deletedProduct = await Product.findByIdAndDelete(productId).lean().exec();
+      //const deletedProduct = await Product.findByIdAndDelete(productId).lean().exec();
+      const deletedProduct = await ProductService.delete(productId)
   
       if (!deletedProduct) {
         res.status(404).json({ error: 'Producto no encontrado' });
         return;
       }
   
-      const products = await Product.find().lean().exec();
+      //const products = await Product.find().lean().exec();
+      const products = await ProductService.getAll();
   
       req.io.emit('productList', products);
   
@@ -60,7 +86,8 @@ export const deleteProductController = async (req, res) => {
 export const readProductController = async (req, res) => {
     const id = req.params.pid;
     try {
-      const product = await Product.findById(id).lean().exec();
+      //const product = await Product.findById(id).lean().exec();
+      const product = await ProductService.getById(id)
       if (product) {
         res.status(200).json(product);
       } else {
@@ -75,41 +102,6 @@ export const readProductController = async (req, res) => {
 export const readAllProductsController = async (req, res) => {
     console.log('¡Solicitud recibida!');
     
-    try {
-      const limit = req.query.limit || 10
-      const page = req.query.page || 1
-      const filterOptions = {}
-  
-      // const products = await Product.find().limit(limit).lean().exec();
-      // //const products = JSON.parse(data);
-      // if (!limit) {
-      //   res.status(200).json({ products });
-      // } else {
-      //   const productsLimit = products.slice(0, limit);
-      //   res.status(200).json({ products: productsLimit });
-      // }
-  
-      if (req.query.stock) filterOptions.stock = req.query.stock
-      if (req.query.category) filterOptions.category = req.query.category
-      const paginateOptions = { limit, page }
-      if (req.query.sort === 'asc') paginateOptions.sort = { price: 1 }
-      if (req.query.sort === 'desc') paginateOptions.sort = { price: -1 }
-      const result = await Product.paginate(filterOptions, paginateOptions)
-      res.status(200).json({
-        status: 'success',
-        payload: result.docs,
-        totalPages: result.totalPages,
-        prevPage: result.prevPage,
-        nextPage: result.nextPage,
-        page: result.page,
-        hasPrevPage: result.hasPrevPage,
-        hasNextPage: result.hasNextPage,
-        prevLink: result.hasPrevPage ? `/api/products?limit=${limit}&page=${result.prevPage}` : null,
-        nextLink: result.hasNextPage ? `/api/products?limit=${limit}&page=${result.nextPage}` : null,
-      });
-  
-    } catch (error) {
-      console.log('Error al leer el archivo:', error);
-      res.status(500).json({ error: 'Error al leer el archivo' });
-    }
+    const result = await ProductService.getAllPaginate(req)
+    res.status(result.statusCode).json(result.response)
 }
