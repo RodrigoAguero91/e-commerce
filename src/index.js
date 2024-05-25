@@ -21,7 +21,7 @@ import errorHandler from './middlewares/error.middleware.js'
 import logger from './logger.js'
 
 const port = config.port
-const mongoURL = config.mongoURL
+const mongoUrl = config.mongoUrl
 
 
 const app = express(); // crea una instancia de una aplicación de express
@@ -34,7 +34,7 @@ app.use(express.static('./src/public')); // middleware para servir archivos est�
 // configuracion de la sesion
 app.use(session({
   store: MongoStore.create({
-    mongoUrl: mongoURL,
+    mongoUrl: mongoUrl,
     
     mongoOptions: {
       useNewUrlParser: true,
@@ -59,7 +59,7 @@ app.set('view engine', 'handlebars');
 
 // Inicialización del servidor
 try {
-  await mongoose.connect(mongoURL) // conecta con la base de datos
+  await mongoose.connect(mongoUrl) // conecta con la base de datos
   const serverHttp = app.listen(port, () => logger.info('server up')) // levanta el servidor en el puerto especificado  
   const io = new Server(serverHttp) // instancia de socket.io
 
